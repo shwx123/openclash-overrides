@@ -1,0 +1,5 @@
+[YAML]
+# opencode.ai 直连（2026-08-17 新增）
+# 走 Fake-IP 反查域名后匹配规则（不加 fake-ip-filter，否则真实 IP 连接无域名可匹配）
++rules:
+  - DOMAIN-SUFFIX,opencode.ai,DIRECT

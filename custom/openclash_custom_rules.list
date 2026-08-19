@@ -1,0 +1,5 @@
+rules:
+  - DOMAIN-SUFFIX,tailscale.com,DIRECT
+  - SRC-PORT,41641,DIRECT
+  - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+  - IP-CIDR,100.100.100.100/32,DIRECT,no-resolve

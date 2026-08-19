@@ -1,0 +1,17 @@
+[YAML]
+# Tailscale 直连规则（参照 Aethersailor Custom_Direct.list）
+# DOMAIN-SUFFIX,tailscale.com / SRC-PORT,41641 来自上游规则
+# 额外补充 CGNAT 网段与 MagicDNS，防 OpenClash 代理 tailnet 内部流量
++rules:
+  - DOMAIN-SUFFIX,tailscale.com,DIRECT
+  - SRC-PORT,41641,DIRECT
+  - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+  - IP-CIDR,100.100.100.100/32,DIRECT,no-resolve
+
+# 公共域名放行：让 tailnet 公共域名返回真实 IP（非 Fake-IP）
+# *.qqhy.suhuilinqing.dpdns.org / *.sdba.suhuilinqing.dpdns.org 的 A 记录指向 tailnet IP(100.x)
+# fake-ip 化后流量会走代理，代理节点访问不到 tailnet 内网
+dns:
+  fake-ip-filter+:
+    - "+.qqhy.suhuilinqing.dpdns.org"
+    - "+.sdba.suhuilinqing.dpdns.org"
