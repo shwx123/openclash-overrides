@@ -1,13 +1,12 @@
 # OpenClash 自定义覆写模块
 
 > 从 sdba-pve2-openwrt (V302) 和 qqhy-pve-openwrt (V104) 导出，GitHub 维护。
+> 仅包含自定义规则，不包含订阅配置（订阅源见 [HenryChiao/MIHOMO_YAMLS](https://github.com/HenryChiao/MIHOMO_YAMLS)）。
 
 ## 目录结构
 
 ```
 overwrite/          ← 覆写模块（上传到 /etc/openclash/overwrite/）
-├── OneSmartProMCX  ← 订阅配置下载 + Provider URL 注入
-├── THESmart        ← 同上（THESmart 订阅源）
 ├── TailscaleDirect ← Tailscale 直连 + tailnet 域名 Fake-IP 排除
 └── opencode-direct ← opencode.ai 直连规则
 
@@ -17,17 +16,6 @@ custom/             ← 自定义文件（上传到 /etc/openclash/custom/）
 ```
 
 ## 各模块说明
-
-### OneSmartProMCX
-- **用途**: 自动下载 OneSmartProMCX.yaml 订阅配置，并将 `EN_KEY1` 环境变量注入到 Provider URL
-- **来源**: [HenryChiao/MIHOMO_YAMLS](https://github.com/HenryChiao/MIHOMO_YAMLS)
-- **参数**: `EN_KEY1` 通过 UCI param 传入（订阅链接）
-- **更新**: 手动或 cron（当前 `update_days=off`）
-
-### THESmart
-- **用途**: 同 OneSmartProMCX，但使用 THESmart.yaml 订阅源
-- **来源**: [HenryChiao/MIHOMO_YAMLS](https://github.com/HenryChiao/MIHOMO_YAMLS)
-- **部署位置**: V104 (qqhy-pve-openwrt)
 
 ### TailscaleDirect
 - **用途**: 让 Tailscale 流量直连，防止被 OpenClash 代理
@@ -81,7 +69,6 @@ cp custom/* /etc/openclash/custom/
 
 ## 注意事项
 
-- `[General]` 段的 `DOWNLOAD_FILE` 会定时下载订阅配置，确保 `EN_KEY1` 等参数在 UCI param 中正确设置
 - `[YAML]` 段的 `+rules` 是追加操作，不会覆盖已有规则
 - `fake-ip-filter+` 是追加操作，保留原有 Fake-IP 排除列表
 - 修改后需重启 OpenClash 才能生效
