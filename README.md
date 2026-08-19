@@ -6,11 +6,11 @@
 ## 目录结构
 
 ```
-overwrite/          ← 覆写模块（上传到 /etc/openclash/overwrite/）
-├── TailscaleDirect ← Tailscale 直连 + tailnet 域名 Fake-IP 排除
-└── opencode-direct ← opencode.ai 直连规则
+overwrite/                ← 覆写模块（上传到 /etc/openclash/overwrite/）
+├── TailscaleDirect.conf  ← Tailscale 直连 + tailnet 域名 Fake-IP 排除
+└── opencode-direct.conf  ← opencode.ai 直连规则
 
-custom/             ← 自定义文件（上传到 /etc/openclash/custom/）
+custom/                   ← 自定义文件（上传到 /etc/openclash/custom/）
 ├── openclash_custom_rules.list      ← Tailscale 直连规则（规则注入）
 └── openclash_custom_fake_filter.list ← Fake-IP 排除列表
 ```
@@ -63,7 +63,7 @@ cp custom/* /etc/openclash/custom/
 
 - **名称**: `TailscaleDirect`
 - **类型**: `http`
-- **URL**: `https://raw.githubusercontent.com/<your-username>/openclash-overrides/main/overwrite/TailscaleDirect`
+- **URL**: `https://raw.githubusercontent.com/shwx123/openclash-overrides/main/overwrite/TailscaleDirect.conf`
 - **配置匹配**: `all`
 - **启用**: ✅
 
