@@ -72,3 +72,13 @@ cp custom/* /etc/openclash/custom/
 - `[YAML]` 段的 `+rules` 是追加操作，不会覆盖已有规则
 - `fake-ip-filter+` 是追加操作，保留原有 Fake-IP 排除列表
 - 修改后需重启 OpenClash 才能生效
+
+## Prevent_DNS_Leak 修复（v0.47.156 custom 通道）
+
+Aethersailor 的 [Prevent_DNS_Leak](https://github.com/Aethersailor/Custom_OpenClash_Rules/tree/main/overwrite) 模块在 **OpenClash v0.47.156 + yaml 覆写方案**（Custom_Clash_8in1 / Custom_Clash_*）下，`[Overwrite]` 段 ruby 的 groups/rules 修改会被 `[General]` 段处理**覆盖**——表现为 COCR-DNS-Leak-Guard 组、MATCH 重定向、no-resolve 补全不落地（核心 respect-rules 仍生效）。
+
+**修复**：将 [`fix/prevent_dns_leak_custom.sh`](fix/prevent_dns_leak_custom.sh) 中的 `ruby_edit` 行追加到路由器 `/etc/openclash/custom/openclash_custom_overwrite.sh` 的 **`exit 0` 之前**（custom 通道在模块覆写之后执行，修改可落地；放在 `exit 0` 之后不会执行）。
+
+- 前置：仍须启用 Prevent_DNS_Leak 覆写模块（`[General]` 段提供 respect-rules / proxy-server-nameserver 自动设置）
+- 验证：运行配置出现 `COCR-DNS-Leak-Guard` 组 + `MATCH,COCR-DNS-Leak-Guard` + `respect-rules: true` + `proxy-server-nameserver`
+- 实测：2026-08-20，V202 + Custom_Clash_Fallback + v0.47.156（google/tailnet 正常）
