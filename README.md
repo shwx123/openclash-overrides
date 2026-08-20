@@ -82,3 +82,20 @@ Aethersailor 的 [Prevent_DNS_Leak](https://github.com/Aethersailor/Custom_OpenC
 - 前置：仍须启用 Prevent_DNS_Leak 覆写模块（`[General]` 段提供 respect-rules / proxy-server-nameserver 自动设置）
 - 验证：运行配置出现 `COCR-DNS-Leak-Guard` 组 + `MATCH,COCR-DNS-Leak-Guard` + `respect-rules: true` + `proxy-server-nameserver`
 - 实测：2026-08-20，V202 + Custom_Clash_Fallback + v0.47.156（google/tailnet 正常）
+
+## Prevent_DNS_Leak_Fix 自安装模块（v0.47.156，推荐用法）
+
+把「Prevent DNS Leak 修复」做成**纯订阅格式**：模块通过 `[General] DOWNLOAD_FILE` 自动把仓库版完整 custom 脚本（`custom/openclash_custom_overwrite.sh`）下载到路由器 `/etc/openclash/custom/`。custom 通道（init.d 3644 行，模块覆写之后执行）让 ruby 修改落地——**无需手工改任何文件**。
+
+**部署**（任意机器，1 分钟）：
+1. 添加覆写模块条目：`type=http`，`url=https://raw.githubusercontent.com/shwx123/openclash-overrides/main/overwrite/Prevent_DNS_Leak_Fix.conf`，`config=all`，`enable=1`，`order=25`（须在 Prevent_DNS_Leak 之后）
+2. 重启 OpenClash（首次启动自动下载 custom 脚本并生效；已实测「删除脚本→重启→自动恢复」）
+
+**前置**：仍须启用 Aethersailor Prevent_DNS_Leak 模块（`[General]` 段提供 respect-rules / proxy-server-nameserver 设置）。
+
+**验证**：运行配置出现 `COCR-DNS-Leak-Guard` 组 + `MATCH,COCR-DNS-Leak-Guard` + `respect-rules: true` + `proxy-server-nameserver`。
+
+**踩坑实录（2026-08-20）**：
+- **别用 jsdelivr 分支 URL 作 DOWNLOAD_FILE 源**：jsdelivr 对 `@main` 分支缓存约 12h 且**忽略 query 参数**（`?v=2` 无效），会拉取到旧版。用 raw.githubusercontent.com（Fastly 缓存仅分钟级）。
+- **CRLF 陷阱**：经 Windows 本地 `cat` 提取的脚本会变 CRLF，shebang `#!/bin/sh\r` 导致 execve 失败（busybox 报 `not found`、无日志）。仓库文件必须为 LF。
+- cron=`0 4 * * *` 每天 4 点自动同步 custom 脚本（CDN 缓存过期后内容自然最新）。
